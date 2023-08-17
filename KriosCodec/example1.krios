@@ -1,0 +1,15 @@
+\\This is a single-line comment.
+
+\\ekfjgdfjsf
+
+\*
+This is
+a multi-line,
+comment.
+\*
+local a = 10
+\*
+This is another
+a multi-line,
+comment.
+\*print(a)
