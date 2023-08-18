@@ -1,13 +1,15 @@
-\\This is a single-line comment.
+\|This is a single-line comment.
 
-\\ekfjgdfjsf
+\|ekfjgdfjsf
+
+\|edstfd
 
 \*
 This is
 a multi-line,
 comment.
 \*
-local a = 10
+global a = 10\|You don't actually need to precise that a variable is global cause is the default.
 \*
 This is another
 a multi-line,
