@@ -79,8 +79,9 @@ local function parser(txt)
     local file,buffer,maxChar = "",0,0
     for i, v in ipairs(single_line_comments) do
         if type(v) == "number" then
+            print(string.sub(txt,buffer , v-3), --[[ string.sub( txt , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1 , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1)  ,]]"\n---------")--string.find(txt,"\n",v - 2) + 1))
             file = file.."\n"..string.sub(txt,buffer , v - 3)--string.find(txt,"\n",v - 2) + 1)
-            buffer = (string.find(txt,"\n",v - 2) or #txt - 2) + 2
+            buffer = (string.find(txt,"\n",v - 2) or #txt - 2) + 1
 
             if maxChar < v then maxChar = v end
             --print("N",v,string.sub(txt,v,v),#txt)
@@ -133,7 +134,7 @@ local function parser(txt)
     _i = 1
     for k in txt:gmatch("%\n+()") do
         --keywords[_i] = k.." "..keywords[_i]
-        print(txt)
+        --print(txt)
         if string.sub(txt,k,k) == "\n" then
             table.insert(keywords,_i,";")
             --print(keywords[_i],_i,string.sub(txt,k,k),k)
@@ -147,7 +148,7 @@ local function parser(txt)
     end
 
 
-    table.print(keywords,true)
+    --table.print(keywords,true)
 
 end
 
