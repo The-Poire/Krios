@@ -15,3 +15,5 @@ This is another
 a multi-line,
 comment.
 \*print(a)
+local l = 2 \| introducing local values, locals are only share within their loop/file.
+Hello \| ktrsio
