@@ -1,5 +1,11 @@
 
-local ASSEMBLY_OPERATIONS
+local ASSEMBLY_OPERATIONS = {
+    _local = function(key)
+        return
+    end
+
+
+}
 
 --love.filesystem.setRequirePath("/KriosCodec")
 
@@ -154,13 +160,23 @@ local function parser(txt)
         _i = _i + 2
     end
 
-    local assembly = {}
-    for k,v in ipairs(keywords) do
-        
+    local assembly,buffer = {},{}
+    while true do
     end
+    --[[for k,v in ipairs(keywords) do
+        --ASSEMBLY_OPERATIONS["_"..v]
+        if nil then
+        elseif v = then
+        elseif tostring(tonumber(v)) == v then
+            buffer[2] = tonumber(v)
+            print(k,v)
+        elseif v == "local" then
+            buffer = {"local"}
+        end
+    end]]
 
 
-    table.print(keywords,true)
+    --table.print(keywords,true)
 
 end
 
