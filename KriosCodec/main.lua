@@ -67,6 +67,16 @@ local function parser(txt)
         table.merge(single_line_comments,multiline_comments)
         --single_line_comments = multiline_comments
         table.sort(single_line_comments,comp)
+
+        local buffer,_i = single_line_comments,0
+        for k,v in ipairs(single_line_comments) do
+            if type(v) == "table" and single_line_comments[k + 1] > v[1] and single_line_comments[k + 1] < v[2] then
+                table.remove(buffer,k-_i + 1)
+                _i = _i + 1
+            end
+        end
+        single_line_comments = buffer
+
         --table.sort(multiline_comments,comp)
         --multiline_comments = nil
         print("---------------------")
@@ -79,7 +89,7 @@ local function parser(txt)
     local file,buffer,maxChar = "",0,0
     for i, v in ipairs(single_line_comments) do
         if type(v) == "number" then
-            print(string.sub(txt,buffer , v-3), --[[ string.sub( txt , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1 , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1)  ,]]"\n---------")--string.find(txt,"\n",v - 2) + 1))
+            --print(string.sub(txt,buffer , v-3),string.sub(txt,(string.find(txt,"\n",v - 2) or #txt - 2) + 1))-- --[[ string.sub( txt , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1 , ( string.find(txt,"\n",v - 2) or #txt - 2 ) + 1)  ,]]"\n---------")--string.find(txt,"\n",v - 2) + 1))
             file = file.."\n"..string.sub(txt,buffer , v - 3)--string.find(txt,"\n",v - 2) + 1)
             buffer = (string.find(txt,"\n",v - 2) or #txt - 2) + 1
 
@@ -88,7 +98,7 @@ local function parser(txt)
         elseif type(v) == "table" then
             --file = file..string.sub(txt,v[2],#txt) --(string.sub(txt,0,v[1]-3) .. string.sub(txt,v[2],-1))
             --file = file..string.sub(txt,buffer,#txt)
-
+            file=file..string.sub(txt,buffer,v[1]-3)
             if maxChar < v[2] then maxChar = v[2] end
             buffer = v[2]
             --print("T",maxChar,string.sub(txt,maxChar,maxChar),#txt)
@@ -148,7 +158,7 @@ local function parser(txt)
     end
 
 
-    --table.print(keywords,true)
+    table.print(keywords,true)
 
 end
 

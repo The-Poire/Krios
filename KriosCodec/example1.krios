@@ -13,6 +13,7 @@ global a = 10\|You don't actually need to precise that a variable is global caus
 \*
 This is another
 a multi-line,
+\| This comment in a comment won't change anything.
 comment.
 \*print(a)
 local l = 2 \| introducing local values, locals are only share within their loop/file.
