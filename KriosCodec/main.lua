@@ -1,4 +1,6 @@
 
+local ASSEMBLY_OPERATIONS
+
 --love.filesystem.setRequirePath("/KriosCodec")
 
 if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
