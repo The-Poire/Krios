@@ -1,10 +1,53 @@
 
-local ASSEMBLY_OPERATIONS = {
-    _local = function(key)
-        return
-    end
+local utils = {
+    b = function(txt,state,_i)
+        if string.sub(txt,_i,_i + 1) == "\\|" then
+            state[2] = "ci"
+            state[3] = _i
+        elseif string.sub(txt,_i,_i + 1) == "\\*" then
+            state[2] = "cm"
+            state[3] = _i
+        elseif string.sub(txt,_i,_i+5) == "local " then
+            state[2] = "wl1"
+            state[3] = _i + 5
+        end
+
+        return state,_i
+    end,
+    ci = function(txt,state,_i)
+        if string.sub(txt,_i,_i) then
+            state[2] = "b"
+        end
+
+        return state,_i
+    end,
+    wl1 = function(txt,state,_i)
+        local a = string.sub(txt,_i,_i)
+        if a == "\"" or a == "'" then
+            state[2] = "wl1s"
+        elseif tostring(tonumber(a)) == a then
+            state[2] = "wl1i"
+            _i = _i - 1
+        end
+
+        return state,_i
+    end,
+    wl1i = function(txt,state,_i)
+        if string.sub(txt,_i,_i) == "=" then
+            state[5] = string.sub(txt,state[3],_i - 1)
+            state[3] = _i + 1
+            state[2] = "wl2"
+        end
+
+        return state,_i
+    end,
 
 
+null = function(txt,state,_i)
+
+
+        return state,_i
+    end,
 }
 
 --love.filesystem.setRequirePath("/KriosCodec")
@@ -13,10 +56,14 @@ if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
     require("lldebugger").start()
 end
 
-function table.print(t,showIndexes)
-    for k,v in ipairs(t) do
-        if showIndexes then print(k,v)
-        else print(v) end
+function table.print(t,showIndexes,singleLine)
+    if singleLine then
+        print("{ "..table.concat(t," , ").." }")
+    else
+        for k,v in ipairs(t) do
+            if showIndexes then print(k,v)
+            else print(v) end
+        end
     end
 end
 
@@ -50,9 +97,37 @@ end
 local function parser(txt)
 
     local initial_file_size = #txt
+    local state = {0,"b",0,0,"",""}
+    local assembly,buffer = {},{}
+
+    local _i = 0
+    while true do
+        --if state[2] == nil then
+            state[4] = _i
+        --end
+        state,_i = utils[state[2]](txt,state,_i)
+
+        if state[2] == "wl2" and string.sub(txt,_i,_i) == "\n" then
+            state[6] = string.sub(txt,state[3],_i - 1)
+            state[2] = "b"
+        end
+
+        if state[2] == "cm" and string.sub(txt,_i,_i+1) == "\\*" then
+            state[2] = "b"
+            _i = _i + 1
+        end
+
+
+        if _i >= initial_file_size then break end
+
+        --print(string.sub(txt,_i,_i+4))
+        table.print(state,false,true)
+
+        _i = _i + 1
+    end
 
     --Loading Comments
-    local single_line_comments,multiline_comments = {},{}
+    --[====[local single_line_comments,multiline_comments = {},{}
 
         --single line comments
         for v in string.gmatch(txt, "\\[|]+()") do
@@ -158,12 +233,9 @@ local function parser(txt)
             --print(keywords[_i],_i,string.sub(txt,k,k),k)
         end
         _i = _i + 2
-    end
+    end]====]
 
-    local assembly,buffer = {},{}
-    while true do
-        break
-    end
+
     --[[for k,v in ipairs(keywords) do
         --ASSEMBLY_OPERATIONS["_"..v]
         if nil then
