@@ -162,6 +162,7 @@ local function parser(txt)
 
     local assembly,buffer = {},{}
     while true do
+        break
     end
     --[[for k,v in ipairs(keywords) do
         --ASSEMBLY_OPERATIONS["_"..v]
