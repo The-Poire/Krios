@@ -15,8 +15,16 @@ local utils = {
         return state,_i
     end,
     ci = function(txt,state,_i)
-        if string.sub(txt,_i,_i) then
+        if string.sub(txt,_i,_i) == "\n" then
             state[2] = "b"
+        end
+
+        return state,_i
+    end,
+    cm = function(txt,state,_i)
+        if string.sub(txt,_i,_i+1) == "\\*" then
+            state[2] = "b"
+            _i =_i+1
         end
 
         return state,_i
@@ -37,6 +45,45 @@ local utils = {
             state[5] = string.sub(txt,state[3],_i - 1)
             state[3] = _i + 1
             state[2] = "wl2"
+        end
+
+        return state,_i
+    end,
+    wl1s = function(txt,state,_i)
+        if string.sub(txt,_i,_i) == "=" then
+            state[5] = string.sub(txt,state[3],_i - 1)
+            state[3] = _i + 1
+            _i=_i+1
+            state[2] = "wl2"
+        end
+
+        return state,_i
+    end,
+    wl2 = function(txt,state,_i)
+        local a = string.sub(txt,_i,_i)
+        if a == "\"" or a == "'" then
+            state[2] = "wl2s"
+        elseif tostring(tonumber(a)) == a then
+            state[2] = "wl2i"
+            _i = _i - 1
+        end
+
+        return state,_i
+    end,
+    wl2i = function(txt,state,_i)
+        if string.sub(txt,_i,_i) == "=" then
+            state[5] = string.sub(txt,state[3],_i - 1)
+            state[3] = _i + 1
+            state[2] = "b"
+        end
+
+        return state,_i
+    end,
+    wl2s = function(txt,state,_i)
+        if string.sub(txt,_i,_i) == "=" then
+            state[5] = string.sub(txt,state[3],_i - 1)
+            state[3] = _i + 1
+            state[2] = "b"
         end
 
         return state,_i
@@ -107,7 +154,7 @@ local function parser(txt)
         --end
         state,_i = utils[state[2]](txt,state,_i)
 
-        if state[2] == "wl2" and string.sub(txt,_i,_i) == "\n" then
+        --[[if state[2] == "wl2" and string.sub(txt,_i,_i) == "\n" then
             state[6] = string.sub(txt,state[3],_i - 1)
             state[2] = "b"
         end
@@ -115,7 +162,7 @@ local function parser(txt)
         if state[2] == "cm" and string.sub(txt,_i,_i+1) == "\\*" then
             state[2] = "b"
             _i = _i + 1
-        end
+        end]]
 
 
         if _i >= initial_file_size then break end
