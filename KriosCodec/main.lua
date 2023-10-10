@@ -1,4 +1,6 @@
 
+local local_path = love.filesystem.getSource()
+
 local utils = {
     b = function(txt,state,_i)
         if string.sub(txt,_i,_i + 1) == "\\|" then
@@ -31,17 +33,28 @@ local utils = {
     end,
     wl1 = function(txt,state,_i)
         local a = string.sub(txt,_i,_i)
-        if a == "\"" or a == "'" then
+        
+        if string.sub(txt,_i,_i) == "=" then
+            state[5] = string.sub(txt,state[3],_i - 1)
+            state[3] = _i + 1
+            _i=_i+1
+            state[2] = "wl2"
+        end
+
+        --[[if a == "\"" or a == "'" then
             state[2] = "wl1s"
+            state[3] = _i
         elseif tostring(tonumber(a)) == a then
             state[2] = "wl1i"
             _i = _i - 1
-        end
+            state[3] = _i
+        end]]
 
         return state,_i
     end,
-    wl1i = function(txt,state,_i)
-        if string.sub(txt,_i,_i) == "=" then
+
+    --[[wl1i = function(txt,state,_i)
+        if tostring(tonumber(string.sub(txt,_i,_i))) == string.sub(txt,_i,_i) then
             state[5] = string.sub(txt,state[3],_i - 1)
             state[3] = _i + 1
             state[2] = "wl2"
@@ -58,27 +71,30 @@ local utils = {
         end
 
         return state,_i
-    end,
+    end,]]
+
     wl2 = function(txt,state,_i)
         local a = string.sub(txt,_i,_i)
         if a == "\"" or a == "'" then
             state[2] = "wl2s"
         elseif tostring(tonumber(a)) == a then
             state[2] = "wl2i"
-            _i = _i - 1
+            --_i = _i - 1
         end
 
         return state,_i
     end,
+
     wl2i = function(txt,state,_i)
-        if string.sub(txt,_i,_i) == "=" then
-            state[5] = string.sub(txt,state[3],_i - 1)
+        if tostring(tonumber(string.sub(txt,_i,_i))) == string.sub(txt,_i,_i) then
+            state[6] = string.sub(txt,state[3],_i - 1)
             state[3] = _i + 1
             state[2] = "b"
         end
 
         return state,_i
     end,
+    
     wl2s = function(txt,state,_i)
         if string.sub(txt,_i,_i) == "=" then
             state[5] = string.sub(txt,state[3],_i - 1)
@@ -153,7 +169,7 @@ local function parser(txt)
             state[4] = _i
         --end
         state,_i = utils[state[2]](txt,state,_i)
-
+        print(string.sub(txt,state[3],_i - 1))
         --[[if state[2] == "wl2" and string.sub(txt,_i,_i) == "\n" then
             state[6] = string.sub(txt,state[3],_i - 1)
             state[2] = "b"
@@ -304,5 +320,7 @@ function love.keyreleased(key)
     if key == "escape" then love.event.quit() end
 end
 
-parser((io.open("KriosCodec/example1.krios","r")):read("a"))
+require(local_path.."/testing.lua")
+
+--parser((io.open("KriosCodec/example1.krios","r")):read("a"))
 
